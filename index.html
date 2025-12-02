@@ -684,11 +684,12 @@
         let durationInterval = null;
 
         function connectWebSocket() {
-            ws = new WebSocket('ws://147.135.213.72/ws');
+            ws = new WebSocket('ws://147.135.213.72:20345/ws');
             
             ws.onopen = () => {
                 console.log('Connected to bot backend');
                 addLog('Connected to bot backend');
+                document.querySelector('.navbar .user-info span').textContent = 'Server Online';
             };
             
             ws.onmessage = (event) => {
@@ -711,6 +712,9 @@
 
         function handleServerMessage(data) {
             switch(data.type) {
+                case 'bot_status':
+                    updateBotStatus(data.connected);
+                    break;
                 case 'session_started':
                     updateSessionStatus('online', data.host);
                     break;
@@ -723,6 +727,23 @@
                 case 'log':
                     addLog(data.message, data.level);
                     break;
+            }
+        }
+
+        function updateBotStatus(connected) {
+            const statusEl = document.querySelector('.navbar .status-indicator');
+            const textEl = document.querySelector('.navbar .user-info span');
+            
+            if (connected) {
+                statusEl.style.background = '#10b981';
+                statusEl.style.boxShadow = '0 0 15px #10b981';
+                textEl.textContent = 'Bot Online';
+                addLog('✅ Bot connected to backend', 'info');
+            } else {
+                statusEl.style.background = '#ef4444';
+                statusEl.style.boxShadow = '0 0 15px #ef4444';
+                textEl.textContent = 'Bot Offline';
+                addLog('❌ Bot disconnected from backend', 'error');
             }
         }
 
