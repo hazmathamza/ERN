@@ -705,6 +705,12 @@
                 console.log('Connected to bot backend');
                 addLog('Connected to bot backend');
                 document.querySelector('.navbar .user-info span').textContent = 'Server Online';
+                
+                // Authenticate with token
+                ws.send(JSON.stringify({
+                    command: 'authenticate',
+                    token: authToken
+                }));
             };
             
             ws.onmessage = (event) => {
@@ -727,6 +733,14 @@
 
         function handleServerMessage(data) {
             switch(data.type) {
+                case 'authenticated':
+                    if (data.success) {
+                        addLog('✅ Authenticated successfully', 'info');
+                    } else {
+                        addLog('❌ Authentication failed', 'error');
+                        setTimeout(() => window.location.href = 'login.html', 2000);
+                    }
+                    break;
                 case 'bot_status':
                     updateBotStatus(data.connected);
                     break;
@@ -940,7 +954,7 @@
                 sessionStorage.clear();
                 
                 // Notify backend
-                fetch('http://localhost:20345/api/logout', {
+                fetch('http://localhost:20226/api/logout', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ token: authToken })
