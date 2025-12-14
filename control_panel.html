@@ -699,7 +699,7 @@
         let durationInterval = null;
 
         function connectWebSocket() {
-            ws = new WebSocket('ws://51.75.118.5:20226/ws');
+            ws = new WebSocket('ws://51.83.103.21:20079/ws');
             
             ws.onopen = () => {
                 console.log('Connected to bot backend');
@@ -954,7 +954,7 @@
                 sessionStorage.clear();
                 
                 // Notify backend
-                fetch('http://localhost:20226/api/logout', {
+                fetch('http://localhost:20079/api/logout', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ token: authToken })
